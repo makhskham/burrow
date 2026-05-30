@@ -2,12 +2,41 @@
 
 A distributed message queue written in Go.
 
-The name comes from Franz Kafka's short story *The Burrow* - a tale about an animal
-constructing an intricate underground tunnel network to protect its stored goods. The
-creature's obsession with the structural integrity of its burrow, the reliability of
-each passage, and the safety of every stored item mirrors exactly what a message queue
-must be: a carefully constructed system of channels through which messages travel,
-stored durably and retrieved reliably. Kafka built the metaphor. Burrow builds the queue.
+## Origin
+
+This project came out of a coincidence that felt too good to ignore.
+
+I was deep in self-study on Apache Kafka - reading through its internals, working
+through the ISR protocol, trying to genuinely understand why the design choices were
+made and not just how to use it. At the same time, I was reading Franz Kafka's
+final work: *The Burrow*, an unfinished novella found among his papers after his death
+in 1924.
+
+*The Burrow* is the interior monologue of an unnamed creature who has spent its life
+constructing an elaborate underground tunnel system to protect its stored food. The
+creature is consumed not by external threats but by an obsession with the integrity of
+its own construction - every passage must hold, every chamber must be secure, every
+route must be reliable. It cannot rest. It keeps returning to inspect, to reinforce,
+to worry about the one point of failure it hasn't found yet.
+
+I was reading that and thinking about Kafka (the system) at the same time, and I
+couldn't unsee it. Apache Kafka's entire correctness story is the same obsession made
+engineering: the ISR protocol exists because the engineers couldn't accept a system
+that *mostly* preserved messages. The epoch fencing exists because they couldn't
+accept a split-brain that *probably* wouldn't cause data loss. The high watermark
+exists because consumers should *never* read uncommitted data, not *rarely*.
+
+The creature in the novella and the engineers behind the distributed system share the
+same disposition: a refusal to accept "good enough" when the thing being protected
+actually matters.
+
+That's what this project is. The name isn't a clever pun on Franz Kafka's name - it's
+a genuine reflection of what I was thinking about when I built it. A burrow is a
+structure where the builder is never fully satisfied, always reinforcing, always
+stress-testing the walls. That's the right mindset for a distributed system that
+makes durability guarantees.
+
+Kafka built the metaphor. Burrow builds the queue.
 
 ## What Makes Burrow Different
 
