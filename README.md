@@ -4,46 +4,15 @@ A distributed message queue written in Go.
 
 ## Origin
 
-This project came out of a coincidence that felt too good to ignore, and the more I
-sat with it the more I became convinced it was not really a coincidence at all.
+While self-studying Apache Kafka's internals, I happened to be reading Franz Kafka's
+final work at the same time: *The Burrow*, an unfinished novella about a creature
+that constructs an elaborate underground tunnel system and becomes wholly consumed by
+its obsession with the structural integrity of what it built, unable to rest, always
+returning to inspect the one point of failure it has not yet found.
 
-I was deep in self-study on Apache Kafka, spending weeks reading through its internals
-and working through the ISR protocol in detail, genuinely trying to understand why
-each design decision was made rather than just accepting the surface-level explanation
-of how it works, because I have always found that the "why" is where the real
-understanding lives. Alongside that, I happened to be reading Franz Kafka's final
-work, *The Burrow*, an unfinished novella found among his papers after his death
-in 1924, and somewhere in the middle of reading both at the same time something clicked
-in a way I could not unfocus from.
-
-*The Burrow* is the interior monologue of an unnamed creature who has devoted its
-entire existence to constructing an elaborate underground tunnel system to protect
-its stored food, and what makes it remarkable is that the creature is not threatened
-by anything external, it is consumed entirely by its own obsession with the structural
-integrity of what it has built, returning again and again to inspect every passage,
-reinforce every chamber, and worry about the single point of failure it is convinced
-it has not yet discovered, unable to rest even when the structure is by any reasonable
-measure already complete.
-
-Reading that while thinking about Apache Kafka's correctness guarantees, I could not
-unsee the parallel, because the ISR protocol exists precisely because the engineers
-behind it could not accept a system that *mostly* preserved messages, and the epoch
-fencing exists because they could not accept a split-brain scenario that *probably*
-would not cause data loss, and the high watermark exists because consumers should
-*never* read uncommitted data and not merely *rarely*, which is the same refusal to
-be satisfied with "good enough" that drives the creature in the novella to keep
-reinforcing walls that are already standing.
-
-What the creature in the novella and the engineers behind the distributed system share
-is a disposition, a genuine inability to accept structural uncertainty when the thing
-being protected actually matters, and that disposition is what I wanted this project
-to be built from.
-
-The name is not a clever pun on Franz Kafka's name but a genuine reflection of what
-I was thinking about when I built it, because a burrow is a structure where the
-builder is never fully satisfied, always returning to stress-test the walls one more
-time, and that turned out to be exactly the right frame of mind for building a
-distributed system that makes durability guarantees it actually has to keep.
+The parallel was impossible to unsee. Apache Kafka's correctness guarantees come from
+that same refusal to accept "good enough," and this project was built from the same
+disposition. The name is not a pun. It is a reflection.
 
 Kafka built the metaphor. Burrow builds the queue.
 
