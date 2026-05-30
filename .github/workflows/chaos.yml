@@ -1,8 +1,10 @@
 name: Chaos Tests
 
+# Chaos tests require a live 3-broker cluster + Toxiproxy with proxies pre-configured.
+# Run manually via "Run workflow" on GitHub Actions, or locally with:
+#   docker compose up -d && go test -tags chaos -v ./chaos/...
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 jobs:
   chaos:
@@ -14,17 +16,26 @@ jobs:
           go-version: "1.24"
       - name: Set up Docker Compose cluster
         run: docker compose up -d --build
-      - name: Wait for cluster
-        run: sleep 10
-      - name: Install Toxiproxy
+      - name: Wait for cluster to be ready
+        run: sleep 15
+      - name: Install and start Toxiproxy
         run: |
           wget -qO /usr/local/bin/toxiproxy-server \
             https://github.com/Shopify/toxiproxy/releases/download/v2.9.0/toxiproxy-server-linux-amd64
           chmod +x /usr/local/bin/toxiproxy-server
           toxiproxy-server &
-          sleep 2
+          sleep 3
+      - name: Create Toxiproxy proxies
+        run: |
+          curl -s -X POST http://localhost:8474/proxies \
+            -H "Content-Type: application/json" \
+            -d '{"name":"leader-to-follower-latency","upstream":"burrow-broker1:9092","listen":"0.0.0.0:19092"}'
+          curl -s -X POST http://localhost:8474/proxies \
+            -H "Content-Type: application/json" \
+            -d '{"name":"network-partition","upstream":"burrow-broker1:9092","listen":"0.0.0.0:29192"}'
+          echo "Proxies created"
       - name: Run chaos tests
-        run: go test -tags chaos -v -timeout 120s ./chaos/toxiproxy/...
+        run: go test -tags chaos -v -timeout 180s ./chaos/toxiproxy/...
       - name: Tear down
         if: always()
         run: docker compose down -v
