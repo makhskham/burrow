@@ -1,0 +1,99 @@
+syntax = "proto3";
+package burrow.v1;
+option go_package = "github.com/makhskham/burrow/proto/gen";
+
+message RecordBatch {
+  int64 base_offset       = 1;
+  repeated bytes payloads = 2;
+}
+
+message ProduceRequest {
+  string topic            = 1;
+  int32  partition        = 2;
+  int64  producer_id      = 3;
+  int64  seq_num          = 4;
+  int32  acks             = 5;
+  repeated bytes payloads = 6;
+}
+message ProduceResponse {
+  int64  base_offset = 1;
+  int64  epoch       = 2;
+  string redirect    = 3;
+}
+
+message FetchRequest {
+  string topic     = 1;
+  int32  partition = 2;
+  int64  offset    = 3;
+  int32  max_bytes = 4;
+}
+message FetchResponse {
+  RecordBatch batch = 1;
+  int64       hw    = 2;
+}
+
+message ReplicateFetchRequest {
+  string broker_id = 1;
+  string topic     = 2;
+  int32  partition = 3;
+  int64  offset    = 4;
+  int32  max_bytes = 5;
+  int64  epoch     = 6;
+}
+message ReplicateFetchResponse {
+  RecordBatch batch      = 1;
+  int64       leader_leo = 2;
+  int64       hw         = 3;
+  int64       epoch      = 4;
+}
+
+message UpdateLEORequest {
+  string broker_id = 1;
+  string topic     = 2;
+  int32  partition = 3;
+  int64  leo       = 4;
+  int64  epoch     = 5;
+}
+message UpdateLEOResponse {
+  int64 hw     = 1;
+  bool  in_isr = 2;
+}
+
+message LeaderChangedRequest {
+  string topic       = 1;
+  int32  partition   = 2;
+  string leader_id   = 3;
+  string leader_addr = 4;
+  int64  epoch       = 5;
+  int64  hw          = 6;
+}
+message LeaderChangedResponse {}
+
+message RegisterProducerRequest  { string client_id  = 1; }
+message RegisterProducerResponse { int64  producer_id = 1; }
+
+message CommitOffsetRequest {
+  string group     = 1;
+  string topic     = 2;
+  int32  partition = 3;
+  int64  offset    = 4;
+}
+message CommitOffsetResponse {}
+
+message FetchOffsetRequest {
+  string group     = 1;
+  string topic     = 2;
+  int32  partition = 3;
+}
+message FetchOffsetResponse { int64 offset = 1; }
+
+service BrokerService {
+  rpc Produce          (ProduceRequest)          returns (ProduceResponse);
+  rpc Fetch            (FetchRequest)            returns (FetchResponse);
+  rpc ReplicateFetch   (ReplicateFetchRequest)   returns (ReplicateFetchResponse);
+  rpc UpdateLEO        (UpdateLEORequest)        returns (UpdateLEOResponse);
+  rpc LeaderChanged    (LeaderChangedRequest)    returns (LeaderChangedResponse);
+  rpc RegisterProducer (RegisterProducerRequest) returns (RegisterProducerResponse);
+  rpc CommitOffset     (CommitOffsetRequest)     returns (CommitOffsetResponse);
+  rpc FetchOffset      (FetchOffsetRequest)      returns (FetchOffsetResponse);
+}
