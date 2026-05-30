@@ -1,8 +1,0 @@
-  broker:
-    id: local
-  storage:
-    data_dir: C:/tmp/burrow-test
-  grpc:
-    addr: 0.0.0.0:9092
-  metrics:
-    addr: 0.0.0.0:9093
