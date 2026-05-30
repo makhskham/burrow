@@ -1,0 +1,10 @@
+broker:
+  id: "broker2"
+  replica_lag_timeout: "10s"
+  replica_fetch_interval: "100ms"
+storage:
+  data_dir: "/data"
+grpc:
+  addr: "0.0.0.0:9092"
+metrics:
+  addr: "0.0.0.0:9093"

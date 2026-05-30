@@ -1,0 +1,56 @@
+version: "3.9"
+
+# Three-node Burrow cluster. node1/2/3 are independent - manual replication
+# configuration via EnsurePartition calls is required for multi-broker setups.
+# For single-broker development: connect to localhost:19092.
+
+services:
+  broker1:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: burrow-broker1
+    volumes:
+      - broker1-data:/data
+      - ./configs/broker1.yaml:/config.yaml:ro
+    ports:
+      - "19092:9092"
+      - "19093:9093"
+    networks: [burrow]
+
+  broker2:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: burrow-broker2
+    volumes:
+      - broker2-data:/data
+      - ./configs/broker2.yaml:/config.yaml:ro
+    ports:
+      - "29092:9092"
+      - "29093:9093"
+    depends_on: [broker1]
+    networks: [burrow]
+
+  broker3:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: burrow-broker3
+    volumes:
+      - broker3-data:/data
+      - ./configs/broker3.yaml:/config.yaml:ro
+    ports:
+      - "39092:9092"
+      - "39093:9093"
+    depends_on: [broker1]
+    networks: [burrow]
+
+volumes:
+  broker1-data:
+  broker2-data:
+  broker3-data:
+
+networks:
+  burrow:
+    driver: bridge

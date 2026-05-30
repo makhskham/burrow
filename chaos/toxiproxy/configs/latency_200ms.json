@@ -1,0 +1,13 @@
+{
+  "name": "leader-to-follower-latency",
+  "upstream": "burrow-broker1:9092",
+  "listen": "0.0.0.0:19092",
+  "toxics": [
+    {
+      "name": "latency_200ms",
+      "type": "latency",
+      "stream": "downstream",
+      "attributes": { "latency": 200, "jitter": 50 }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: burrow
+    static_configs:
+      - targets:
+          - burrow-broker1:9093
+          - burrow-broker2:9093
+          - burrow-broker3:9093

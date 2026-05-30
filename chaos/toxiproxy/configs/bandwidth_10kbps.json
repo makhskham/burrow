@@ -1,0 +1,13 @@
+{
+  "name": "bandwidth-throttle",
+  "upstream": "burrow-broker1:9092",
+  "listen": "0.0.0.0:19092",
+  "toxics": [
+    {
+      "name": "bandwidth",
+      "type": "bandwidth",
+      "stream": "downstream",
+      "attributes": { "rate": 10 }
+    }
+  ]
+}

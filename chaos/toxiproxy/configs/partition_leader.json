@@ -1,0 +1,13 @@
+{
+  "name": "network-partition",
+  "upstream": "burrow-broker1:9092",
+  "listen": "0.0.0.0:19092",
+  "toxics": [
+    {
+      "name": "partition",
+      "type": "timeout",
+      "stream": "downstream",
+      "attributes": { "timeout": 0 }
+    }
+  ]
+}

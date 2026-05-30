@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: burrow-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    networks: [burrow]
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: burrow-grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=burrow
+    ports:
+      - "3000:3000"
+    depends_on: [prometheus]
+    networks: [burrow]
+
+networks:
+  burrow:
+    external: true
+    name: burrow_burrow
