@@ -12,7 +12,7 @@ returning to inspect the one point of failure it has not yet found.
 
 The parallel was impossible to unsee. Apache Kafka's correctness guarantees come from
 that same refusal to accept "good enough," and this project was built from the same
-disposition. The name is not a pun. It is a reflection.
+disposition.
 
 Kafka built the metaphor. Burrow builds the queue.
 
