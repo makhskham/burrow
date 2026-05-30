@@ -118,7 +118,16 @@ func (s *Server) Produce(ctx context.Context, req *pb.ProduceRequest) (*pb.Produ
 	ps, ok := s.parts[key]
 	s.mu.RUnlock()
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "partition %s-%d not found", req.Topic, req.Partition)
+		// auto-create partition as leader (mirrors Kafka's auto.create.topics.enable)
+		if err := s.EnsurePartition(req.Topic, req.Partition, true, "", 10*time.Second); err != nil {
+			return nil, status.Errorf(codes.Internal, "auto-create partition: %v", err)
+		}
+		s.mu.RLock()
+		ps, ok = s.parts[key]
+		s.mu.RUnlock()
+		if !ok {
+			return nil, status.Errorf(codes.Internal, "partition creation failed")
+		}
 	}
 	if !ps.isLeader {
 		return &pb.ProduceResponse{Redirect: ps.leaderAddr}, nil
@@ -165,7 +174,15 @@ func (s *Server) Fetch(_ context.Context, req *pb.FetchRequest) (*pb.FetchRespon
 	ps, ok := s.parts[key]
 	s.mu.RUnlock()
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "partition not found")
+		if err := s.EnsurePartition(req.Topic, req.Partition, true, "", 10*time.Second); err != nil {
+			return nil, status.Errorf(codes.Internal, "auto-create partition: %v", err)
+		}
+		s.mu.RLock()
+		ps, ok = s.parts[key]
+		s.mu.RUnlock()
+		if !ok {
+			return nil, status.Errorf(codes.Internal, "partition creation failed")
+		}
 	}
 
 	hw := ps.part.LEO()
