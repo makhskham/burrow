@@ -284,11 +284,21 @@ func (s *Segment) TruncateTo(target int64) error {
 		truncPos = pos
 	}
 	f.Close()
-	if err := s.logFile.Truncate(truncPos); err != nil {
+
+	// close log file before truncating (required on Windows)
+	s.logWriter.Flush()
+	s.logFile.Close()
+	if err := os.Truncate(s.logPath, truncPos); err != nil {
 		return err
 	}
+	s.logFile, err = os.OpenFile(s.logPath, os.O_RDWR|os.O_APPEND, 0o644)
+	if err != nil {
+		return err
+	}
+	s.logWriter = bufio.NewWriterSize(s.logFile, 64<<10)
 	s.logSize = truncPos
 	s.nextOffset = target
+
 	os.Remove(s.indexPath)
 	s.indexFile.Close()
 	s.indexFile, err = os.OpenFile(s.indexPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0o644)
