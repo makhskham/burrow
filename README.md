@@ -12,7 +12,7 @@ that constructs an elaborate underground tunnel system and becomes wholly consum
 its obsession with the structural integrity of what it built, unable to rest, always
 returning to inspect the one point of failure it has not yet found.
 
-The parallel was impossible to unsee. Apache Kafka's correctness guarantees come from
+The parallel was literally impossible to unsee. Apache Kafka's correctness guarantees come from
 that same refusal to accept "good enough," and this project was built from the same
 disposition.
 
@@ -31,8 +31,8 @@ only thing that survives a collapse.
 
 Kafka built the metaphor. Burrow builds the queue.
 
-*P.S. — this is what happens when someone studying distributed systems gets distracted
-by a century-old piece of unfinished fiction and cannot stop thinking about it.*
+*Basically, this is what happens when someone studying distributed systems gets distracted
+by a century-old piece of unfinished fiction and gets side-tracked.*
 
 ## What Makes Burrow Different
 
