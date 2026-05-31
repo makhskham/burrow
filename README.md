@@ -16,6 +16,10 @@ The parallel was impossible to unsee. Apache Kafka's correctness guarantees come
 that same refusal to accept "good enough," and this project was built from the same
 disposition.
 
+The creature's burrow has a fortified central chamber surrounded by branching passages, each one reinforced well beyond what any rational assessment would require, because rational assessment was never really the point. The ISR in Burrow is those passages, the set of replicas the leader trusts enough to include in the quorum before acknowledging a write. The high watermark is how far along those passages the system is willing to believe its data is safe, and a consumer never reads beyond it, because reading beyond it would mean trusting something that has not yet been confirmed. The epoch number is the system's memory of which leader built which section of the log, so that a node still writing after it has been replaced cannot quietly corrupt what comes after it. The write-ahead log is the creature's habit of scratching every action into the wall before carrying it out, because memory alone is not proof, and proof is the only thing that survives a collapse.
+What you are looking at, in other words, is what happens when someone studying distributed systems gets distracted by a century-old piece of unfinished fiction and cannot stop thinking about it.
+
+
 Kafka built the metaphor. Burrow builds the queue.
 
 ## What Makes Burrow Different
