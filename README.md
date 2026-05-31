@@ -30,9 +30,6 @@ chaos engineering suite that runs in CI on every push:
 - A **linearizability test** runs 10 concurrent producers through a network partition
   and verifies every committed message is present exactly once
 
-[![Test](https://github.com/makhskham/burrow/actions/workflows/test.yml/badge.svg)](https://github.com/makhskham/burrow/actions/workflows/test.yml)
-[![Chaos](https://github.com/makhskham/burrow/actions/workflows/chaos.yml/badge.svg)](https://github.com/makhskham/burrow/actions/workflows/chaos.yml)
-
 ## Architecture
 
 ```mermaid
