@@ -199,4 +199,4 @@ monitoring/                  Grafana + Prometheus
 
 ## License
 
-MIT
+MIT - built by Makhsuma Khamzaliyeva
