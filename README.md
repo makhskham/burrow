@@ -36,7 +36,7 @@ by a century-old piece of unfinished fiction and gets side-tracked.*
 
 ## What Makes Burrow Different
 
-Most portfolio message queues claim correctness. Burrow **proves** it.
+Most portfolio message queues claim correctness whereas Burrow **proves** it.
 
 The core is a pull-based ISR (in-sync replicas) protocol with epoch-based leader
 fencing (the same fundamental model that makes Apache Kafka correct) implemented
