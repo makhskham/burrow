@@ -21,7 +21,7 @@ Kafka built the metaphor. Burrow builds the queue.
 Most portfolio message queues claim correctness. Burrow **proves** it.
 
 The core is a pull-based ISR (in-sync replicas) protocol with epoch-based leader
-fencing - the same fundamental model that makes Apache Kafka correct - implemented
+fencing (the same fundamental model that makes Apache Kafka correct) implemented
 from scratch without external consensus libraries. Correctness is verified by a
 chaos engineering suite available to run manually:
 
@@ -57,17 +57,17 @@ sequenceDiagram
 ## Key Design Decisions
 
 **Pull-based replication.** Followers pull from the leader at their own pace. The
-leader never blocks waiting for followers - a slow follower does not affect producers
+leader never blocks waiting for followers so that a slow follower does not affect producers
 or other followers.
 
 **ISR + high watermark.** The leader tracks which followers are caught up (in-sync
 replicas). `acks=all` waits until all ISR members have replicated the write before
-acknowledging. The high watermark is `min(LEO of all ISR members)` - consumers only
+acknowledging. The high watermark is `min(LEO of all ISR members)` and so, since consumers only
 read up to HW, so they never see uncommitted data.
 
 **Epoch fencing.** Every partition has a monotonically increasing epoch number stored
 durably. When a new leader is elected, it increments the epoch and broadcasts it. Any
-write request with a stale epoch is rejected - this prevents a split-brain scenario
+write request with a stale epoch is rejected. This prevents a split-brain scenario
 where two nodes believe they are leader simultaneously.
 
 **Exactly-once semantics.** Producer IDs and per-partition sequence numbers allow the
