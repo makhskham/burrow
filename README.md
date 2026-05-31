@@ -23,7 +23,7 @@ Most portfolio message queues claim correctness. Burrow **proves** it.
 The core is a pull-based ISR (in-sync replicas) protocol with epoch-based leader
 fencing - the same fundamental model that makes Apache Kafka correct - implemented
 from scratch without external consensus libraries. Correctness is verified by a
-chaos engineering suite that runs in CI on every push:
+chaos engineering suite available to run manually:
 
 - **Toxiproxy** injects network latency, bandwidth throttling, and full partitions
 - **Pumba** kills the leader container mid-write and verifies new leader election
@@ -76,14 +76,40 @@ timeout and the duplicate will be silently ignored.
 
 ## Quick Start
 
+### Single broker (no Docker)
+
 ```bash
-# Start a 3-broker cluster
+# Build
+make build
+
+# Write a config file
+cat > local.yaml <<EOF
+broker:
+  id: local
+storage:
+  data_dir: /tmp/burrow
+grpc:
+  addr: 0.0.0.0:9092
+metrics:
+  addr: 0.0.0.0:9093
+EOF
+
+# Start the broker (partitions are created automatically on first use)
+./bin/burrow-broker local.yaml
+
+# In a second terminal: produce and consume
+./bin/burrow-cli produce --broker localhost:9092 --topic events "hello burrow"
+./bin/burrow-cli consume --broker localhost:9092 --topic events --from 0
+```
+
+### 3-broker cluster (Docker)
+
+```bash
+# Start cluster
 make docker-up
 
-# Produce a message (acks=all ensures replication before ack)
+# Produce and consume
 ./bin/burrow-cli produce --broker localhost:19092 --topic events --acks -1 "hello burrow"
-
-# Consume
 ./bin/burrow-cli consume --broker localhost:19092 --topic events
 
 # Run the benchmark suite
@@ -98,7 +124,7 @@ make docker-down
 
 ## Performance
 
-Run `make bench` to see current numbers. Results are tracked over time by GitHub Actions:
+Run `make bench` to see current numbers. Results are saved as build artifacts on each run.
 
 | Benchmark | Throughput |
 |---|---|
@@ -108,15 +134,19 @@ Run `make bench` to see current numbers. Results are tracked over time by GitHub
 
 ## Storage Format
 
-Each partition is stored as append-only segment files:
+Each partition is stored as append-only segment files. The epoch log sits alongside
+partitions, not inside them:
 
 ```
-partition-0/
-  00000000000000000000.log    # records: [len:4][crc:4][offset:8][ts:8][payload:N]
-  00000000000000000000.index  # sparse index: [rel_offset:4][file_pos:4] every 4KB
-  00000000000512000000.log    # new segment after 512MB
-  ...
-  epoch/epoch.log             # durable epoch log for leader fencing
+{dataDir}/
+  test-0/                          # partition directory
+    00000000000000000000.log       # records: [len:4][crc:4][offset:8][ts:8][payload:N]
+    00000000000000000000.index     # sparse index: [rel_offset:4][file_pos:4] every 4KB
+    00000000000512000000.log       # new segment after 512MB
+    ...
+  epoch/
+    test-0/                        # epoch directory (sibling to partition, not inside it)
+      epoch.log                    # durable epoch log for leader fencing
 ```
 
 ## Chaos Engineering
@@ -129,7 +159,7 @@ chaos/
   linearizability_test.go  10 concurrent producers + partition + verify correctness
 ```
 
-All chaos tests run in CI via `.github/workflows/chaos.yml`.
+Chaos tests run manually via `workflow_dispatch` in `.github/workflows/chaos.yml`.
 
 ## Project Structure
 
