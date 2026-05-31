@@ -1,6 +1,8 @@
 # Burrow
 
-A distributed message queue written in Go.
+![Burrow](assets/burrow_cover_art.png)
+
+*A distributed message queue written in Go.*
 
 ## Origin
 
