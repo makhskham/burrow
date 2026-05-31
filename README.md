@@ -81,10 +81,10 @@ or other followers.
 **ISR + high watermark.** The leader tracks which followers are caught up (in-sync
 replicas). `acks=all` waits until all ISR members have replicated the write before
 acknowledging. The high watermark is `min(LEO of all ISR members)` and so, since consumers only
-read up to HW, so they never see uncommitted data.
+read up to HW, they never see uncommitted data.
 
 **Epoch fencing.** Every partition has a monotonically increasing epoch number stored
-durably. When a new leader is elected, it increments the epoch and broadcasts it. Any
+durably. When a new leader is elected, it increments the epoch and broadcasts it so that any
 write request with a stale epoch is rejected. This prevents a split-brain scenario
 where two nodes believe they are leader simultaneously.
 
